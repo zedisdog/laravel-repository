@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 上午11:22
  */
 
-namespace App\Repositories;
+namespace Dezsidog;
 
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
