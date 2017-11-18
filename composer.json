@@ -16,6 +16,8 @@
         "phpunit/phpunit": "~6.0"
     },
     "autoload": {
-        "Dezsidog\\Repository\\": "src/"
+        "psr-4": {
+            "Dezsidog\\Repository\\": "src/"
+        }
     }
 }
