@@ -120,7 +120,7 @@ class Post extends Eloquent {
 * just append expands field to url:
 
 ```
-https://www.xxxx.com/path/to/post-list?expands=user,Type
+https://www.xxxx.com/path/to/post-list?expands=user,type
 ```
 
 * or make expands auto
