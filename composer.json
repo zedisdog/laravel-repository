@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Dezsidog\\Repository\\": "src/"
+            "Dezsidog\\": "src/"
         }
     }
 }
