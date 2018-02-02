@@ -39,7 +39,7 @@ abstract class Repository implements RepositoryInterface
 
         foreach ($filters as $key => $value) {
 
-            if (!$value) {
+            if ($value === null) {
                 continue;
             }
 
