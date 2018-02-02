@@ -39,7 +39,7 @@ abstract class Repository implements RepositoryInterface
 
         foreach ($filters as $key => $value) {
 
-            if (!$value) {
+            if ($value === null) {
                 continue;
             }
 
@@ -128,9 +128,13 @@ abstract class Repository implements RepositoryInterface
         return $model->delete();
     }
 
-    public function paginate(int $perPage = 15, array $columns = ['*']): LengthAwarePaginator
+    public function paginate(?\Closure $callback = null, int $perPage = 15, array $columns = ['*']): LengthAwarePaginator
     {
-        return $this->getQuery()->paginate($perPage,$columns);
+        $query = $this->getQuery();
+        if ($callback) {
+            $callback($query);
+        }
+        return $query->paginate($perPage,$columns);
     }
 
     protected function applyExpands(Builder $query): Builder

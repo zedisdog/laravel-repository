@@ -29,7 +29,7 @@ interface RepositoryInterface
      * @param array $columns
      * @return LengthAwarePaginator
      */
-    public function paginate(int $perPage = 15, array $columns = ['*']): LengthAwarePaginator;
+    public function paginate(?\Closure $callback = null, int $perPage = 15, array $columns = ['*']): LengthAwarePaginator;
 
     /**
      * 创建记录
