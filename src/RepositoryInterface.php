@@ -67,6 +67,8 @@ interface RepositoryInterface
      * @param $value
      * @param array $columns
      * @return Collection
+     *
+     * @deprecated 1.1.0
      */
-    public function findBy(string $field, $value, array $columns = ['*']): Collection;
+    public function findBy($field, $operator = null, $value = null, string $boolean = 'and', array $columns = ['*']): Collection;
 }
