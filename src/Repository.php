@@ -170,9 +170,12 @@ abstract class Repository implements RepositoryInterface
         return $this->expands;
     }
 
-    public function getQuery(): Builder
+    public function getQuery(Model $model = null): Builder
     {
-        return $this->applyFilters($this->applyExpands(call_user_func([$this->model,'query'])));
+        if ($model && !($model instanceof $this->model)) {
+            throw new \LogicException('this repository is not for this object');
+        }
+        return $this->applyFilters($this->applyExpands($model ? $model->newQuery() : call_user_func([$this->model,'query'])));
     }
 
     protected function getFillable(): array
