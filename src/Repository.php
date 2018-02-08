@@ -116,6 +116,15 @@ abstract class Repository implements RepositoryInterface
         return $model->fresh($this->getExpands());
     }
 
+    /**
+     * 根据简单条件查找数据
+     * @param string $field
+     * @param $value
+     * @param array $columns
+     * @return Collection
+     *
+     * @deprecated 1.1.0
+     */
     public function findBy($field, $operator = null, $value = null, string $boolean = 'and', array $columns = ['*']): Collection
     {
         Log::warning('the findBy method of Repository is deprecated, by instead you can use getQuery method to build query string by yourself.');
