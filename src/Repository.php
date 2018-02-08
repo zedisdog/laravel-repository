@@ -14,6 +14,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 
 abstract class Repository implements RepositoryInterface
@@ -115,9 +116,19 @@ abstract class Repository implements RepositoryInterface
         return $model->fresh($this->getExpands());
     }
 
-    public function findBy(string $field, $value, array $columns = ['*']): Collection
+    /**
+     * 根据简单条件查找数据
+     * @param string $field
+     * @param $value
+     * @param array $columns
+     * @return Collection
+     *
+     * @deprecated 1.1.0
+     */
+    public function findBy($field, $operator = null, $value = null, string $boolean = 'and', array $columns = ['*']): Collection
     {
-        return $this->getQuery()->where($field,$value)->get($columns);
+        Log::warning('the findBy method of Repository is deprecated, by instead you can use getQuery method to build query string by yourself.');
+        return $this->getQuery()->where($field, $operator, $value, $boolean)->get($columns);
     }
 
     public function delete($model): bool
@@ -159,7 +170,7 @@ abstract class Repository implements RepositoryInterface
         return $this->expands;
     }
 
-    protected function getQuery(): Builder
+    public function getQuery(): Builder
     {
         return $this->applyFilters($this->applyExpands(call_user_func([$this->model,'query'])));
     }
