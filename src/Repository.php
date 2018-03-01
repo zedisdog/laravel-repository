@@ -139,6 +139,14 @@ abstract class Repository implements RepositoryInterface
         return $model->delete();
     }
 
+    /**
+     * @param \Closure|null $callback
+     * @param int $perPage
+     * @param array $columns
+     * @return LengthAwarePaginator
+     *
+     * @deprecated 1.1.2
+     */
     public function paginate(?\Closure $callback = null, int $perPage = 15, array $columns = ['*']): LengthAwarePaginator
     {
         $query = $this->getQuery();
@@ -170,12 +178,9 @@ abstract class Repository implements RepositoryInterface
         return $this->expands;
     }
 
-    public function getQuery(Model $model = null): Builder
+    public function getQuery(): Builder
     {
-        if ($model && !($model instanceof $this->model)) {
-            throw new \LogicException('this repository is not for this object');
-        }
-        return $this->applyFilters($this->applyExpands($model ? $model->newQuery() : call_user_func([$this->model,'query'])));
+        return $this->applyFilters($this->applyExpands(call_user_func([$this->model,'query'])));
     }
 
     protected function getFillable(): array

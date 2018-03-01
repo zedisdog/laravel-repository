@@ -11,6 +11,7 @@ namespace Dezsidog;
 
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -28,6 +29,8 @@ interface RepositoryInterface
      * @param int $perPage
      * @param array $columns
      * @return LengthAwarePaginator
+     *
+     * @deprecated 1.1.2
      */
     public function paginate(?\Closure $callback = null, int $perPage = 15, array $columns = ['*']): LengthAwarePaginator;
 
@@ -71,4 +74,10 @@ interface RepositoryInterface
      * @deprecated 1.1.0
      */
     public function findBy($field, $operator = null, $value = null, string $boolean = 'and', array $columns = ['*']): Collection;
+
+    /**
+     * get query object
+     * @return Builder
+     */
+    public function getQuery(): Builder;
 }
