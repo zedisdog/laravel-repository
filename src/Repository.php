@@ -91,7 +91,9 @@ abstract class Repository implements RepositoryInterface
          * @var Model $model
          */
         $model = call_user_func_array([$this->model,'create'],[$fields]);
-        return $model->fresh($this->getExpands());
+        $model = $model->fresh($this->getExpands());
+        $model->wasRecentlyCreated = true;
+        return $model;
     }
 
     public function find($model, array $columns = ['*']): Model
