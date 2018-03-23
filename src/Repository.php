@@ -212,7 +212,7 @@ abstract class Repository implements RepositoryInterface
 
     public function getQuery(): Builder
     {
-        return $this->applyFilters($this->applyExpands(call_user_func([$this->model,'query'])));
+        return $this->applySort($this->applyFilters($this->applyExpands(call_user_func([$this->model,'query']))));
     }
 
     protected function getFillable(): array
