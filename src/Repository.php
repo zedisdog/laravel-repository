@@ -30,6 +30,36 @@ abstract class Repository implements RepositoryInterface
         }
     }
 
+    protected function applySort(Builder $query): Builder
+    {
+        $sorts = \Request::get('sorts',[]);
+        $model = $query->getModel();
+
+        $current_table = $model->getTable();
+
+        foreach ($sorts as $key => $value) {
+
+            if (!$value || strpos($key, '.') !== false) {
+                continue;
+            }
+
+            //先判断是否有自定义过滤方法
+            $sort_method = 'sortBy'.ucfirst(camel_case($key));
+            if (method_exists($this, $sort_method)) {
+                $this->$sort_method($query,$value);
+                continue;
+            }
+
+            //根据数据库字段名遍历构建排序语句
+            $list = \Schema::getColumnListing($current_table);
+            if (array_search($key,$list)) {
+                $query->orderBy($key, $value);
+            }
+        }
+
+        return $query;
+    }
+
     protected function applyFilters(Builder $query): Builder
     {
         $filters = \Request::get('filters',[]);
@@ -182,7 +212,7 @@ abstract class Repository implements RepositoryInterface
 
     public function getQuery(): Builder
     {
-        return $this->applyFilters($this->applyExpands(call_user_func([$this->model,'query'])));
+        return $this->applySort($this->applyFilters($this->applyExpands(call_user_func([$this->model,'query']))));
     }
 
     protected function getFillable(): array
