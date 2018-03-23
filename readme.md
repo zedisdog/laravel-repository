@@ -77,7 +77,7 @@ public function someMethod(){
     $this->posts->find(...);
     $this->posts->findBy(...);
     $this->posts->all();
-    $this->posts->paginate(...);
+    $this->posts->paginate(...); // deprecated
     $this->posts->create(...);
     $this->posts->update(...);
     $this->posts->delete(...);
@@ -199,3 +199,38 @@ class PostRepository extends Repository {
     }
 }
 ```
+## sort
+
+to sort something by
+```
+https://www.xxxx.com/path/to/post-list?sorts[type_id]=asc&sorts[user_id]=desc
+```
+
+you can not use relations
+
+### custom filters
+
+add method named `sortBy + key name`, to custom filters.
+
+```php
+namespace App\Repository;
+
+use Dezsidog\Repository;
+use App\Post;
+use Illuminate\Database\Eloquent\Builder;
+
+class PostRepository extends Repository {
+    protected $model = Post::class;
+    
+    public function sortByName(Builder $query, $value){
+        $query->orderby('name',$value);
+    }
+}
+```
+
+then make url:
+```
+https://www.xxxx.com/path/to/post-list?filters[name]=asc|desc
+```
+
+you can also cover the exists field
