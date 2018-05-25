@@ -126,7 +126,7 @@ abstract class Repository implements RepositoryInterface
         return $model;
     }
 
-    public function find($model, array $columns = ['*']): Model
+    public function find($model, array $columns = ['*']): ?Model
     {
         if (!($model instanceof Model)) {
             return $this->getQuery()->find($model);
