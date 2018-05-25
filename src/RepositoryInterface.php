@@ -62,7 +62,7 @@ interface RepositoryInterface
      * @param array $columns
      * @return Model
      */
-    public function find($model, array $columns = ['*']): Model;
+    public function find($model, array $columns = ['*']): ?Model;
 
     /**
      * 根据简单条件查找数据
