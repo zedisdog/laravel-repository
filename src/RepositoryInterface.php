@@ -52,9 +52,9 @@ interface RepositoryInterface
     /**
      * 删除记录
      * @param integer|Model $model
-     * @return bool
+     * @return bool|null
      */
-    public function delete($model): bool;
+    public function delete($model): ?bool;
 
     /**
      * 查找单条记录

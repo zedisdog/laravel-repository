@@ -163,7 +163,12 @@ abstract class Repository implements RepositoryInterface
         return $this->getQuery()->where($field, $operator, $value, $boolean)->get($columns);
     }
 
-    public function delete($model): bool
+    /**
+     * @param $model
+     * @return bool|null
+     * @throws \Exception
+     */
+    public function delete($model): ?bool
     {
         if (!($model instanceof Model)) {
             $model = call_user_func_array([$this->model,'find'],[$model]);
