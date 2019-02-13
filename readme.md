@@ -8,6 +8,10 @@ laravel repositories is used to abstract the data layer, making our application 
 
 > will be tested soon.
 
+## language
+
+[中文](https://github.com/zedisdog/laravel-repository/blob/develop/readme_cn.md)
+
 ## feature
 
 * yii expands: you can append `expands=xxx,xx` to url for extra fields by call the relation methods
