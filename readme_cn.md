@@ -11,7 +11,7 @@
 * 类似 `yii` 的 扩展字段：你可以在 url 后面添加这 `expands=xxx,xx` 样的 query string 来获取关联的模型数据。
 * 过滤器：你可以在url后面添加 `filters[fieldName]=xxx&filters[fieldName2]=xx` 这样的 query string 来设置简单的数据库查询条件。
 * 自定义过滤器：你可以自己创建或者覆盖已有的过滤器。
-* 排序：你可以在url后面添加 `sorts[name]=asc`这样的 query string 来设置简单的数据库排序条件。
+* 排序：你可以在url后面添加 `sorts[name]=asc` 这样的 query string 来设置简单的数据库排序条件。
 * 自定义过排序：你可以自己创建或者覆盖已有的排序。
 
 ## 安装

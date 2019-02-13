@@ -10,9 +10,11 @@ laravel repositories is used to abstract the data layer, making our application 
 
 ## feature
 
-* yii expands.you can append `expands=xxx,xx` to url for extra fields by call the relation methods
-* filters.you can append `filters[fieldName]=xxx&filters[fieldName2]=xx` to url for search records by given condition.
-* custom filters.you can add or cover the filter methods.
+* yii expands: you can append `expands=xxx,xx` to url for extra fields by call the relation methods
+* filters: you can append `filters[fieldName]=xxx&filters[fieldName2]=xx` to url for search records by given condition.
+* custom filters: you can add or cover the filter methods.
+* sort: you can append `sorts[name]=asc` to url for sort records by given field.
+* custom filters: you can add or cover the sort methods.
 
 ## install
 ```bash
@@ -208,9 +210,9 @@ https://www.xxxx.com/path/to/post-list?sorts[type_id]=asc&sorts[user_id]=desc
 
 you can not use relations
 
-### custom filters
+### custom sorts
 
-add method named `sortBy + key name`, to custom filters.
+add method named `sortBy + key name`, to custom sorts.
 
 ```php
 namespace App\Repository;
