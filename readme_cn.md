@@ -6,6 +6,9 @@
 
 - [ ] 测试
 
+## 语言
+[english](https://github.com/zedisdog/laravel-repository/blob/develop/readme.md)
+
 ## 特性
 
 * 类似 `yii` 的 扩展字段：你可以在 url 后面添加这 `expands=xxx,xx` 样的 query string 来获取关联的模型数据。
