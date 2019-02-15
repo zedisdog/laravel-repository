@@ -2,32 +2,29 @@
 
 [![License](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-1.png)](LICENSE)
 
-laravel repositories is used to abstract the data layer, making our application more flexible to maintain.
+这个包抽象出数据层，让应用更好维护。
 
-> bad english
+- [ ] 测试
 
-> will be tested soon.
+## 语言
+[english](https://github.com/zedisdog/laravel-repository/blob/develop/readme.md)
 
-## language
+## 特性
 
-[中文](https://github.com/zedisdog/laravel-repository/blob/develop/readme_cn.md)
+* 类似 `yii` 的 扩展字段：你可以在 url 后面添加这 `expands=xxx,xx` 样的 query string 来获取关联的模型数据。
+* 过滤器：你可以在url后面添加 `filters[fieldName]=xxx&filters[fieldName2]=xx` 这样的 query string 来设置简单的数据库查询条件。
+* 自定义过滤器：你可以自己创建或者覆盖已有的过滤器。
+* 排序：你可以在url后面添加 `sorts[name]=asc` 这样的 query string 来设置简单的数据库排序条件。
+* 自定义过排序：你可以自己创建或者覆盖已有的排序。
 
-## feature
-
-* yii expands: you can append `expands=xxx,xx` to url for extra fields by call the relation methods
-* filters: you can append `filters[fieldName]=xxx&filters[fieldName2]=xx` to url for search records by given condition.
-* custom filters: you can add or cover the filter methods.
-* sort: you can append `sorts[name]=asc` to url for sort records by given field.
-* custom filters: you can add or cover the sort methods.
-
-## install
+## 安装
 ```bash
 composer require dezsidog/laravel-repository
 ```
 
-## usage
+## 用法
 
-### create model
+### 创建模型
 
 ```php
 namespace App;
@@ -44,7 +41,7 @@ class Post extends Eloquent {
 }
 ```
 
-### create repository
+### 创建仓库
 ```php
 namespace App\Repository;
 
@@ -56,7 +53,7 @@ class PostRepository extends Repository {
 }
 ```
 
-### add repository to controller
+### 将仓库注入到控制器中
 
 ```php
 namespace App\Http\Controllers;
@@ -76,23 +73,24 @@ class PostsController extends BaseController {
 }
 ```
 
-### then you can
+### 接着你可以做以下操作
 
 ```php
 public function someMethod(){
-    $this->posts->find(...);
-    $this->posts->findBy(...);
+    $this->posts->find();
+    $this->posts->findBy();
     $this->posts->all();
-    $this->posts->paginate(...); // deprecated
-    $this->posts->create(...);
-    $this->posts->update(...);
-    $this->posts->delete(...);
+    $this->posts->paginate(); // 弃用，请直接使用getQuery()
+    $this->posts->create();
+    $this->posts->update();
+    $this->posts->delete();
+    $this->posts->getQuery();
 }
 ```
 
-## expands
+## 扩展字段
 
-if model has relations.
+如果模型有下面两个关联
 
 ```php
 namespace App;
@@ -121,15 +119,15 @@ class Post extends Eloquent {
 }
 ```
 
-### you can
+### 你可以
 
-* just append expands field to url:
+* 将扩展字段像下面这样添加到url里面
 
 ```
 https://www.xxxx.com/path/to/post-list?expands=user,type
 ```
 
-* or make expands auto
+* 或者在仓库类中设置自动加载这些扩展字段
 
 ```php
 namespace App\Repository;
@@ -146,22 +144,22 @@ class PostRepository extends Repository {
 }
 ```
 
-## filters
+## 过滤器
 
-to search something by
+你可以像下面这样搜索
 ```
 https://www.xxxx.com/path/to/post-list?filters[type_id]=3&filters[user_id]=1
 ```
 
-you can use relations
+你也可以通过关联到的模型字段来做搜索
 
 ```
 https://www.xxxx.com/path/to/post-list?filters[type.id]=3&filters[user.id]=1
 ```
 
-### custom filters
+### 自定义过滤器
 
-add method named `filterBy + key name`, to custom filters.
+在仓库类中添加方法来设置自定义过滤器，方法名为：`filterBy + 键名` （注意命名格式不能变）。
 
 ```php
 namespace App\Repository;
@@ -184,12 +182,12 @@ class PostRepository extends Repository {
 }
 ```
 
-then make url:
+接着在url中这样使用你的过滤器
 ```
 https://www.xxxx.com/path/to/post-list?filters[name-or-type-name]=x
 ```
 
-### you can just cover the exists field
+### 你也可以覆盖默认的过滤器
 ```php
 namespace App\Repository;
 
@@ -205,18 +203,18 @@ class PostRepository extends Repository {
     }
 }
 ```
-## sort
+## 排序
 
-to sort something by
+你可以感觉当前模型的字段设置排序
 ```
 https://www.xxxx.com/path/to/post-list?sorts[type_id]=asc&sorts[user_id]=desc
 ```
 
-you can not use relations
+排序不能使用关联的字段。
 
-### custom sorts
+### 自定义排序
 
-add method named `sortBy + key name`, to custom sorts.
+在仓库类中添加方法来设置自定义排序，方法名为：`sortBy + 字段名` （注意命名格式不能变）。
 
 ```php
 namespace App\Repository;
@@ -234,9 +232,9 @@ class PostRepository extends Repository {
 }
 ```
 
-then make url:
+在url中使用
 ```
-https://www.xxxx.com/path/to/post-list?filters[name]=asc|desc
+https://www.xxxx.com/path/to/post-list?sorts[name]=asc|desc
 ```
 
-you can also cover the exists field
+你同样可以覆盖默认的排序。
