@@ -81,5 +81,5 @@ interface RepositoryInterface
      */
     public function getQuery(): Builder;
 
-    public function exists($condition): bool;
+    public function exists(...$args): bool;
 }

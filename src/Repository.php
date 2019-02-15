@@ -135,9 +135,9 @@ abstract class Repository implements RepositoryInterface
         }
     }
 
-    public function exists($condition): bool
+    public function exists(...$args): bool
     {
-        return $this->getQuery()->where($condition)->exists();
+        return $this->getQuery()->where(...$args)->exists();
     }
 
     public function update(array $data, $model): Model
