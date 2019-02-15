@@ -80,4 +80,6 @@ interface RepositoryInterface
      * @return Builder
      */
     public function getQuery(): Builder;
+
+    public function exists($condition): bool;
 }
