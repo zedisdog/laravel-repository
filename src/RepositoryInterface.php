@@ -66,14 +66,14 @@ interface RepositoryInterface
 
     /**
      * 根据简单条件查找数据
-     * @param string $field
-     * @param $value
-     * @param array $columns
-     * @return Collection
+     * @param  string|array|\Closure  $column
+     * @param  mixed   $operator
+     * @param  mixed   $value
+     * @param  string  $boolean
+     * @return Model|null
      *
-     * @deprecated 1.1.0
      */
-    public function findBy($field, $operator = null, $value = null, string $boolean = 'and', array $columns = ['*']): Collection;
+    public function findBy($column, $operator = null, $value = null, $boolean = 'and'): ?Model;
 
     /**
      * get query object
