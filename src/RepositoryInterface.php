@@ -81,5 +81,17 @@ interface RepositoryInterface
      */
     public function getQuery(): Builder;
 
+    /**
+     * 判断给定条件的记录是否存在
+     * @param mixed ...$args
+     * @return bool
+     */
     public function exists(...$args): bool;
+
+    /**
+     * 保存给定的模型
+     * @param Model $model
+     * @return bool
+     */
+    public function save(Model $model): bool;
 }
