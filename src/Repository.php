@@ -14,6 +14,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 
@@ -116,7 +117,7 @@ abstract class Repository implements RepositoryInterface
 
     public function create(array $data): Model
     {
-        $fields = array_only($data,$this->getFillable());
+        $fields = Arr::only($data,$this->getFillable());
         /**
          * @var Model $model
          */
@@ -150,7 +151,7 @@ abstract class Repository implements RepositoryInterface
         if (!($model instanceof Model)) {
             $model = call_user_func_array([$this->model,'find'],[$model]);
         }
-        $fields = array_only($data,$this->getFillable());
+        $fields = Arr::only($data,$this->getFillable());
         /**
          * @var Model $model
          */
