@@ -97,7 +97,12 @@ abstract class Repository implements RepositoryInterface
                 }else{
                     if (method_exists($model, $item)) {
                         $relation = $model->$item();
-                        list($current_table,$field) = explode('.',$relation->getQualifiedForeignKeyName());
+                        if (method_exists($relation, 'getQualifiedForeignKeyName')) {
+                            list($current_table,$field) = explode('.',$relation->getQualifiedForeignKeyName());
+                        } else {
+                            list($current_table,$field) = explode('.',$relation->getQualifiedForeignKey());
+                        }
+
                         if (!in_array($current_table,$query->joins)) {
                             $query->leftJoin($current_table,$field,'=',$relation->getQualifiedParentKeyName());
                         }
