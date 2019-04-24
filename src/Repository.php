@@ -103,7 +103,7 @@ abstract class Repository implements RepositoryInterface
                             list($current_table,$field) = explode('.',$relation->getQualifiedForeignKey());
                         }
 
-                        if (!empty($query->getQuery()->joins) && !in_array($current_table,$query->getQuery()->joins)) {
+                        if (empty($query->getQuery()->joins) || !in_array($current_table,$query->getQuery()->joins)) {
                             $query->leftJoin($current_table,$field,'=',$relation->getQualifiedParentKeyName());
                         }
                     }
