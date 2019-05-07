@@ -14,7 +14,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 
 abstract class Repository implements RepositoryInterface
@@ -23,6 +24,10 @@ abstract class Repository implements RepositoryInterface
 
     protected $expands = [];
 
+    /**
+     * Repository constructor.
+     * @throws ClassNotFoundException
+     */
     public function __construct()
     {
         if (!$this->model || !class_exists($this->model)) {
@@ -30,6 +35,10 @@ abstract class Repository implements RepositoryInterface
         }
     }
 
+    /**
+     * @param Builder $query
+     * @return Builder
+     */
     protected function applySort(Builder $query): Builder
     {
         $sorts = \Request::get('sorts',[]);
@@ -44,7 +53,7 @@ abstract class Repository implements RepositoryInterface
             }
 
             //先判断是否有自定义过滤方法
-            $sort_method = 'sortBy'.ucfirst(camel_case($key));
+            $sort_method = 'sortBy'.ucfirst(Str::camel($key));
             if (method_exists($this, $sort_method)) {
                 $this->$sort_method($query,$value);
                 continue;
@@ -75,7 +84,7 @@ abstract class Repository implements RepositoryInterface
             }
 
             //先判断是否有自定义过滤方法
-            $filter_method = 'filterBy'.ucfirst(camel_case($key));
+            $filter_method = 'filterBy'.ucfirst(Str::camel($key));
             if (strpos($key,'.') === false && method_exists($this, $filter_method)) {
                 $this->$filter_method($query,$value);
                 continue;
@@ -96,8 +105,13 @@ abstract class Repository implements RepositoryInterface
                 }else{
                     if (method_exists($model, $item)) {
                         $relation = $model->$item();
-                        list($current_table,$field) = explode('.',$relation->getQualifiedForeignKeyName());
-                        if (!in_array($current_table,$query->joins)) {
+                        if (method_exists($relation, 'getQualifiedForeignKeyName')) {
+                            list($current_table,$field) = explode('.',$relation->getQualifiedForeignKeyName());
+                        } else {
+                            list($current_table,$field) = explode('.',$relation->getQualifiedForeignKey());
+                        }
+
+                        if (!empty($query->getQuery()->joins) && !in_array($current_table,$query->getQuery()->joins)) {
                             $query->leftJoin($current_table,$field,'=',$relation->getQualifiedParentKeyName());
                         }
                     }
@@ -116,7 +130,7 @@ abstract class Repository implements RepositoryInterface
 
     public function create(array $data): Model
     {
-        $fields = array_only($data,$this->getFillable());
+        $fields = Arr::only($data,$this->getFillable());
         /**
          * @var Model $model
          */
@@ -129,10 +143,20 @@ abstract class Repository implements RepositoryInterface
     public function find($model, array $columns = ['*']): ?Model
     {
         if (!($model instanceof Model)) {
-            return $this->getQuery()->find($model);
+            return $this->getQuery()->find($model, $columns);
         }else{
             return $model->fresh($this->getExpands());
         }
+    }
+
+    /**
+     * 判断给定条件的记录是否存在
+     * @param mixed ...$args
+     * @return bool
+     */
+    public function exists(...$args): bool
+    {
+        return $this->getQuery()->where(...$args)->exists();
     }
 
     public function update(array $data, $model): Model
@@ -140,7 +164,7 @@ abstract class Repository implements RepositoryInterface
         if (!($model instanceof Model)) {
             $model = call_user_func_array([$this->model,'find'],[$model]);
         }
-        $fields = array_only($data,$this->getFillable());
+        $fields = Arr::only($data,$this->getFillable());
         /**
          * @var Model $model
          */
@@ -150,17 +174,16 @@ abstract class Repository implements RepositoryInterface
 
     /**
      * 根据简单条件查找数据
-     * @param string $field
-     * @param $value
-     * @param array $columns
-     * @return Collection
+     * @param  string|array|\Closure  $column
+     * @param  mixed   $operator
+     * @param  mixed   $value
+     * @param  string  $boolean
+     * @return Model|null
      *
-     * @deprecated 1.1.0
      */
-    public function findBy($field, $operator = null, $value = null, string $boolean = 'and', array $columns = ['*']): Collection
+    public function findBy($column, $operator = null, $value = null, $boolean = 'and'): ?Model
     {
-        Log::warning('the findBy method of Repository is deprecated, by instead you can use getQuery method to build query string by yourself.');
-        return $this->getQuery()->where($field, $operator, $value, $boolean)->get($columns);
+        return $this->getQuery()->where(...func_get_args())->first();
     }
 
     /**
@@ -223,5 +246,23 @@ abstract class Repository implements RepositoryInterface
     protected function getFillable(): array
     {
         return call_user_func([(new $this->model),'getFillable']);
+    }
+
+    /**
+     * 保存给定的模型
+     * @param Model $model
+     * @return bool
+     */
+    public function save(Model $model): bool
+    {
+        return $model->save();
+    }
+
+    public function freshModel(array $data = []): Model
+    {
+        /** @var Model $model */
+        $model = new $this->model;
+        $model->fill(Arr::only($data, $model->getFillable()));
+        return $model;
     }
 }

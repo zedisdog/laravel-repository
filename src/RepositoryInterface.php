@@ -66,18 +66,39 @@ interface RepositoryInterface
 
     /**
      * 根据简单条件查找数据
-     * @param string $field
-     * @param $value
-     * @param array $columns
-     * @return Collection
+     * @param  string|array|\Closure  $column
+     * @param  mixed   $operator
+     * @param  mixed   $value
+     * @param  string  $boolean
+     * @return Model|null
      *
-     * @deprecated 1.1.0
      */
-    public function findBy($field, $operator = null, $value = null, string $boolean = 'and', array $columns = ['*']): Collection;
+    public function findBy($column, $operator = null, $value = null, $boolean = 'and'): ?Model;
 
     /**
      * get query object
      * @return Builder
      */
     public function getQuery(): Builder;
+
+    /**
+     * 判断给定条件的记录是否存在
+     * @param mixed ...$args
+     * @return bool
+     */
+    public function exists(...$args): bool;
+
+    /**
+     * 保存给定的模型
+     * @param Model $model
+     * @return bool
+     */
+    public function save(Model $model): bool;
+
+    /**
+     * 获取一个新的model
+     * @param array $data
+     * @return Model
+     */
+    public function freshModel(array $data = []): Model;
 }
