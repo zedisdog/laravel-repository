@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 
 abstract class Repository implements RepositoryInterface
@@ -24,6 +24,10 @@ abstract class Repository implements RepositoryInterface
 
     protected $expands = [];
 
+    /**
+     * Repository constructor.
+     * @throws ClassNotFoundException
+     */
     public function __construct()
     {
         if (!$this->model || !class_exists($this->model)) {
@@ -31,6 +35,10 @@ abstract class Repository implements RepositoryInterface
         }
     }
 
+    /**
+     * @param Builder $query
+     * @return Builder
+     */
     protected function applySort(Builder $query): Builder
     {
         $sorts = \Request::get('sorts',[]);
@@ -45,7 +53,7 @@ abstract class Repository implements RepositoryInterface
             }
 
             //先判断是否有自定义过滤方法
-            $sort_method = 'sortBy'.ucfirst(camel_case($key));
+            $sort_method = 'sortBy'.ucfirst(Str::camel($key));
             if (method_exists($this, $sort_method)) {
                 $this->$sort_method($query,$value);
                 continue;
@@ -76,7 +84,7 @@ abstract class Repository implements RepositoryInterface
             }
 
             //先判断是否有自定义过滤方法
-            $filter_method = 'filterBy'.ucfirst(camel_case($key));
+            $filter_method = 'filterBy'.ucfirst(Str::camel($key));
             if (strpos($key,'.') === false && method_exists($this, $filter_method)) {
                 $this->$filter_method($query,$value);
                 continue;
@@ -248,5 +256,13 @@ abstract class Repository implements RepositoryInterface
     public function save(Model $model): bool
     {
         return $model->save();
+    }
+
+    public function freshModel(array $data = []): Model
+    {
+        /** @var Model $model */
+        $model = new $this->model;
+        $model->fill(Arr::only($data, $model->getFillable()));
+        return $model;
     }
 }

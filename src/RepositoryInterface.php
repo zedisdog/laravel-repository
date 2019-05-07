@@ -94,4 +94,11 @@ interface RepositoryInterface
      * @return bool
      */
     public function save(Model $model): bool;
+
+    /**
+     * 获取一个新的model
+     * @param array $data
+     * @return Model
+     */
+    public function freshModel(array $data = []): Model;
 }
