@@ -24,6 +24,8 @@ abstract class Repository implements RepositoryInterface
 
     protected $expands = [];
 
+    protected $noFilters = false;
+
     /**
      * Repository constructor.
      * @throws ClassNotFoundException
@@ -248,9 +250,17 @@ abstract class Repository implements RepositoryInterface
         return $this->expands;
     }
 
+    /**
+     * @return Builder
+     * @throws \ReflectionException
+     */
     public function getQuery(): Builder
     {
-        return $this->applySort($this->applyFilters($this->applyExpands(call_user_func([$this->model,'query']))));
+        if ($this->noFilters) {
+            return $this->applySort($this->applyExpands(call_user_func([$this->model,'query'])));
+        } else {
+            return $this->applySort($this->applyFilters($this->applyExpands(call_user_func([$this->model,'query']))));
+        }
     }
 
     protected function getFillable(): array
@@ -274,5 +284,14 @@ abstract class Repository implements RepositoryInterface
         $model = new $this->model;
         $model->fill(Arr::only($data, $model->getFillable()));
         return $model;
+    }
+
+    /**
+     * @return static
+     */
+    public function noFilter()
+    {
+        $this->noFilters = true;
+        return $this;
     }
 }

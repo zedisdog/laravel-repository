@@ -101,4 +101,10 @@ interface RepositoryInterface
      * @return Model
      */
     public function freshModel(array $data = []): Model;
+
+    /**
+     * 忽略filter
+     * @return static
+     */
+    public function noFilter();
 }
