@@ -69,6 +69,11 @@ abstract class Repository implements RepositoryInterface
         return $query;
     }
 
+    /**
+     * @param Builder $query
+     * @return Builder
+     * @throws \ReflectionException
+     */
     protected function applyFilters(Builder $query): Builder
     {
         $filters = \Request::get('filters',[]);
@@ -86,7 +91,12 @@ abstract class Repository implements RepositoryInterface
             //先判断是否有自定义过滤方法
             $filter_method = 'filterBy'.ucfirst(Str::camel($key));
             if (strpos($key,'.') === false && method_exists($this, $filter_method)) {
-                $this->$filter_method($query,$value);
+                $reflect = new \ReflectionMethod(static::class, $filter_method);
+                if ($reflect->getNumberOfParameters() == 3) {
+                    $this->$filter_method($query, $value, $filters);
+                } else {
+                    $this->$filter_method($query,$value);
+                }
                 continue;
             }
 
