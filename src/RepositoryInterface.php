@@ -106,5 +106,5 @@ interface RepositoryInterface
      * 忽略filter
      * @return static
      */
-    public function noFilter();
+    public function noFilter(bool $bool = true);
 }

@@ -289,9 +289,9 @@ abstract class Repository implements RepositoryInterface
     /**
      * @return static
      */
-    public function noFilter()
+    public function noFilter(bool $bool = true)
     {
-        $this->noFilters = true;
+        $this->noFilters = $bool;
         return $this;
     }
 }
