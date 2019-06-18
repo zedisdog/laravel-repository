@@ -327,4 +327,9 @@ abstract class Repository implements RepositoryInterface
     {
         return $this->model::updateOrCreate($attr, $values);
     }
+
+    public function firstOrNew(array $attr, array $values = []): Model
+    {
+        return $this->model::firstOrNew($attr, $values);
+    }
 }
