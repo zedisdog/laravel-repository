@@ -135,6 +135,11 @@ abstract class Repository implements RepositoryInterface
         return $query;
     }
 
+    /**
+     * @param array $columns
+     * @return Collection
+     * @throws \ReflectionException
+     */
     public function all(array $columns = ['*']): Collection
     {
         return $this->getQuery()->get($columns);
@@ -152,6 +157,12 @@ abstract class Repository implements RepositoryInterface
         return $model;
     }
 
+    /**
+     * @param Model|int $model
+     * @param array $columns
+     * @return Model|null
+     * @throws \ReflectionException
+     */
     public function find($model, array $columns = ['*']): ?Model
     {
         if (!($model instanceof Model)) {
@@ -165,6 +176,7 @@ abstract class Repository implements RepositoryInterface
      * 判断给定条件的记录是否存在
      * @param mixed ...$args
      * @return bool
+     * @throws \ReflectionException
      */
     public function exists(...$args): bool
     {
@@ -186,12 +198,12 @@ abstract class Repository implements RepositoryInterface
 
     /**
      * 根据简单条件查找数据
-     * @param  string|array|\Closure  $column
-     * @param  mixed   $operator
-     * @param  mixed   $value
-     * @param  string  $boolean
+     * @param string|array|\Closure $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @param string $boolean
      * @return Model|null
-     *
+     * @throws \ReflectionException
      */
     public function findBy($column, $operator = null, $value = null, $boolean = 'and'): ?Model
     {
@@ -217,6 +229,7 @@ abstract class Repository implements RepositoryInterface
      * @param array $columns
      * @return LengthAwarePaginator
      *
+     * @throws \ReflectionException
      * @deprecated 1.1.2
      */
     public function paginate(?\Closure $callback = null, int $perPage = 15, array $columns = ['*']): LengthAwarePaginator
@@ -278,6 +291,10 @@ abstract class Repository implements RepositoryInterface
         return $model->save();
     }
 
+    /**
+     * @param array $data
+     * @return Model
+     */
     public function freshModel(array $data = []): Model
     {
         /** @var Model $model */
@@ -287,11 +304,32 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
+     * @param bool $bool
      * @return static
      */
-    public function noFilter()
+    public function noFilter(bool $bool = true)
     {
-        $this->noFilters = true;
+        $this->noFilters = $bool;
         return $this;
+    }
+
+    /**
+     * @param array $attr
+     * @param array $values
+     * @return Model
+     */
+    public function firstOrCreate(array $attr, array $values = []): Model
+    {
+        return $this->model::firstOrCreate($attr, $values);
+    }
+
+    public function updateOrCreate($attr, $values = []): Model
+    {
+        return $this->model::updateOrCreate($attr, $values);
+    }
+
+    public function firstOrNew(array $attr, array $values = []): Model
+    {
+        return $this->model::firstOrNew($attr, $values);
     }
 }
